@@ -3,730 +3,749 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kazakh Identity — National DNA</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<title>Human Body Explorer</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    font-family: 'Montserrat', sans-serif;
-    background: #050505;
-    color: #fff;
-    overflow-x: hidden;
-    min-height: 100vh;
-  }
+body {
+  background: #050a15;
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
 
-  /* ── HERO SECTION ── */
-  .hero {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    background: radial-gradient(ellipse at center, #1a2a40 0%, #0a1020 45%, #050505 100%);
-  }
+.page-title {
+  color: #E5B869;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  text-shadow: 0 0 30px #E5B869aa;
+  margin-bottom: 10px;
+  text-align: center;
+}
 
-  /* ── CANVAS DNA ── */
-  #dnaCanvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    opacity: 0.85;
-  }
+.page-sub {
+  color: #4FC3F7;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  text-align: center;
+}
 
-  /* ── PARTICLE STARS ── */
-  .stars {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-  }
-  .star {
-    position: absolute;
-    border-radius: 50%;
-    background: #fff;
-    animation: twinkle var(--d) ease-in-out infinite alternate;
-  }
-  @keyframes twinkle {
-    from { opacity: 0.1; transform: scale(1); }
-    to   { opacity: 0.8; transform: scale(1.4); }
-  }
+/* ── MAIN CONTAINER ── */
+.container {
+  position: relative;
+  width: 900px;
+  max-width: 98vw;
+}
 
-  /* ── LAYOUT GRID ── */
-  .layout {
-    position: relative;
-    z-index: 10;
-    display: grid;
-    grid-template-columns: 1fr 420px 1fr;
-    grid-template-rows: auto;
-    gap: 0 20px;
-    width: 100%;
-    max-width: 1400px;
-    padding: 60px 30px;
-    align-items: center;
-  }
+/* ── IMAGE WRAPPER ── */
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 60px #4FC3F733, 0 0 120px #E5B86922;
+  border: 1px solid #4FC3F722;
+}
 
-  /* ── LEFT COLUMN ── */
-  .col-left {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    align-items: flex-end;
-  }
+.image-wrapper img {
+  width: 100%;
+  display: block;
+  border-radius: 20px;
+}
 
-  /* ── RIGHT COLUMN ── */
-  .col-right {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    align-items: flex-start;
-  }
+/* ── HOTSPOT BUTTON ── */
+.hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 20;
+}
 
-  /* ── CALLOUT CARD ── */
-  .callout {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    opacity: 0;
-    transform: translateX(-40px);
-    animation: slideIn 0.8s ease forwards;
-    cursor: pointer;
-  }
-  .col-right .callout {
-    flex-direction: row-reverse;
-    transform: translateX(40px);
-    animation: slideInR 0.8s ease forwards;
-  }
-  @keyframes slideIn  { to { opacity:1; transform:translateX(0); } }
-  @keyframes slideInR { to { opacity:1; transform:translateX(0); } }
+.hotspot-ring {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(79, 195, 247, 0.15);
+  border: 2px solid #4FC3F7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  box-shadow: 0 0 15px #4FC3F755;
+  animation: pulseRing 2s ease-in-out infinite;
+}
 
-  .callout:nth-child(1) { animation-delay: 0.3s; }
-  .callout:nth-child(2) { animation-delay: 0.6s; }
-  .col-right .callout:nth-child(1) { animation-delay: 0.5s; }
-  .col-right .callout:nth-child(2) { animation-delay: 0.8s; }
+.hotspot:hover .hotspot-ring,
+.hotspot.active .hotspot-ring {
+  background: rgba(229, 184, 105, 0.3);
+  border-color: #E5B869;
+  box-shadow: 0 0 25px #E5B869aa;
+  transform: scale(1.2);
+  animation: none;
+}
 
-  /* ── CIRCLE IMAGE ── */
-  .circle-img {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    border: 3px solid #E5B869;
-    box-shadow: 0 0 18px #E5B86988, 0 0 40px #E5B86933;
-    overflow: hidden;
-    flex-shrink: 0;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-    position: relative;
-  }
-  .circle-img:hover {
-    transform: scale(1.12);
-    box-shadow: 0 0 30px #E5B869cc, 0 0 60px #E5B86966;
-  }
-  .circle-img canvas,
-  .circle-img svg {
-    width: 100%;
-    height: 100%;
-  }
+.hotspot-icon {
+  font-size: 18px;
+  line-height: 1;
+}
 
-  /* Canvas-painted circles */
-  .circle-img canvas { border-radius: 50%; }
+.hotspot-label {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(5, 15, 30, 0.9);
+  border: 1px solid #4FC3F744;
+  color: #4FC3F7;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  pointer-events: none;
+}
 
-  /* ── CONNECTOR LINE ── */
-  .connector {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #E5B869cc, transparent);
-    position: relative;
-    overflow: hidden;
-  }
-  .connector::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, #fff, transparent);
-    animation: lightTravel 2.5s linear infinite;
-  }
-  @keyframes lightTravel { to { left: 200%; } }
+.hotspot.active .hotspot-label {
+  color: #E5B869;
+  border-color: #E5B86966;
+}
 
-  /* ── TEXT BOX ── */
-  .callout-text { max-width: 180px; }
-  .col-left .callout-text { text-align: right; }
-  .col-right .callout-text { text-align: left; }
+/* Pulse animation */
+@keyframes pulseRing {
+  0%, 100% { box-shadow: 0 0 10px #4FC3F755, 0 0 0 0 #4FC3F733; }
+  50%       { box-shadow: 0 0 20px #4FC3F7aa, 0 0 12px 8px #4FC3F711; }
+}
 
-  .callout-text h3 {
-    font-size: 13px;
-    font-weight: 700;
-    color: #E5B869;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    text-shadow: 0 0 10px #E5B86988;
-    margin-bottom: 5px;
-  }
-  .callout-text p {
-    font-size: 11px;
-    font-weight: 300;
-    color: #aac4d8;
-    line-height: 1.5;
-  }
+/* Ripple on click */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(229, 184, 105, 0.4);
+  animation: rippleAnim 0.6s ease-out forwards;
+  pointer-events: none;
+  width: 60px;
+  height: 60px;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%) scale(0);
+}
+@keyframes rippleAnim {
+  to { transform: translate(-50%,-50%) scale(3); opacity: 0; }
+}
 
-  /* ── CENTRE HUMAN ── */
-  .human-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+/* ── INFO PANEL ── */
+.info-panel {
+  position: absolute;
+  right: -300px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 270px;
+  background: linear-gradient(135deg, rgba(5,15,35,0.97), rgba(10,25,55,0.97));
+  border: 1px solid #4FC3F744;
+  border-radius: 16px;
+  padding: 24px 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, right 0.4s ease;
+  box-shadow: 0 0 40px #4FC3F722, 0 20px 60px rgba(0,0,0,0.5);
+  z-index: 100;
+}
 
-  #humanCanvas {
-    display: block;
-    filter: drop-shadow(0 0 30px #4FC3F755) drop-shadow(0 0 60px #1a2a4088);
-  }
+.info-panel.visible {
+  opacity: 1;
+  pointer-events: all;
+  right: -290px;
+}
 
-  /* ── TITLE OVERLAY ── */
-  .title-block {
-    position: absolute;
-    bottom: -50px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    white-space: nowrap;
-  }
-  .title-block h1 {
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: #E5B869;
-    text-shadow: 0 0 20px #E5B869aa;
-  }
-  .title-block p {
-    font-size: 10px;
-    letter-spacing: 6px;
-    color: #4FC3F7;
-    margin-top: 4px;
-    text-transform: uppercase;
-  }
+.panel-icon {
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 12px;
+}
 
-  /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    padding: 30px 20px 50px;
-    background: linear-gradient(to bottom, transparent, #050505);
-  }
-  .nav-item {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #4FC3F7;
-    cursor: pointer;
-    transition: color 0.3s, text-shadow 0.3s;
-  }
-  .nav-item:hover {
-    color: #E5B869;
-    text-shadow: 0 0 12px #E5B869;
-  }
+.panel-title {
+  color: #E5B869;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+  text-shadow: 0 0 15px #E5B869aa;
+  margin-bottom: 6px;
+}
 
-  /* ── PULSE RING ── */
-  @keyframes pulseRing {
-    0%   { transform: scale(1);   opacity: 0.6; }
-    100% { transform: scale(1.6); opacity: 0; }
-  }
+.panel-subtitle {
+  color: #4FC3F7;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 14px;
+  opacity: 0.8;
+}
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .layout { grid-template-columns: 1fr; grid-template-rows: auto; }
-    .col-left, .col-right { align-items: center; }
-    .col-left .callout-text, .col-right .callout-text { text-align: center; }
-    .human-wrap { order: -1; }
-  }
+.panel-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #E5B86966, transparent);
+  margin-bottom: 14px;
+}
+
+.panel-desc {
+  color: #c8dff0;
+  font-size: 12px;
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+
+.panel-facts {
+  list-style: none;
+}
+
+.panel-facts li {
+  color: #8ab8cc;
+  font-size: 11px;
+  padding: 5px 0;
+  border-bottom: 1px solid #ffffff0a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-facts li::before {
+  content: '◆';
+  color: #E5B869;
+  font-size: 7px;
+  flex-shrink: 0;
+}
+
+.panel-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  color: #4FC3F7;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: opacity 0.2s, color 0.2s;
+}
+.panel-close:hover { opacity: 1; color: #E5B869; }
+
+/* ── BOTTOM BUTTON BAR ── */
+.btn-bar {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 1.5px solid #4FC3F755;
+  background: rgba(79, 195, 247, 0.08);
+  color: #4FC3F7;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn:hover, .btn.active {
+  border-color: #E5B869;
+  background: rgba(229, 184, 105, 0.15);
+  color: #E5B869;
+  box-shadow: 0 0 20px #E5B86933;
+}
+
+.btn-icon { font-size: 16px; }
+
+/* ── SCAN LINE EFFECT ── */
+.scan-line {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #4FC3F7, transparent);
+  opacity: 0.4;
+  animation: scanDown 4s linear infinite;
+  pointer-events: none;
+  z-index: 5;
+}
+@keyframes scanDown {
+  from { top: 0; }
+  to   { top: 100%; }
+}
+
+/* Corner decorations */
+.corner {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-color: #E5B869;
+  border-style: solid;
+  opacity: 0.6;
+  z-index: 10;
+}
+.corner-tl { top: 8px; left: 8px;  border-width: 2px 0 0 2px; }
+.corner-tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+.corner-bl { bottom: 8px; left: 8px;  border-width: 0 0 2px 2px; }
+.corner-br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+
+@media (max-width: 700px) {
+  .info-panel { display: none; }
+  .btn-bar { gap: 8px; }
+  .btn { padding: 8px 14px; font-size: 10px; }
+}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════ HERO ══════════════════════ -->
-<section class="hero">
+<div class="page-title">Human Body Explorer</div>
+<div class="page-sub">Click on any organ to discover</div>
 
-  <!-- Stars -->
-  <div class="stars" id="stars"></div>
+<div class="container">
 
-  <!-- DNA Canvas (background) -->
-  <canvas id="dnaCanvas"></canvas>
+  <!-- IMAGE + HOTSPOTS -->
+  <div class="image-wrapper" id="imageWrapper">
 
-  <!-- Layout -->
-  <div class="layout">
+    <!-- Scan line -->
+    <div class="scan-line"></div>
 
-    <!-- LEFT CALLOUTS -->
-    <div class="col-left">
+    <!-- Corner decorations -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
 
-      <!-- Callout 1: National Code -->
-      <div class="callout" data-target="brain">
-        <div class="callout-text">
-          <h3>National Code</h3>
-          <p>DNA strand with Kazakh geometric ornaments — biological &amp; cultural continuity.</p>
-        </div>
-        <div class="connector"></div>
-        <div class="circle-img">
-          <canvas id="c-yurt" width="110" height="110"></canvas>
-        </div>
+    <!-- Background image -->
+    <img src="https://i.imgur.com/placeholder.png"
+         id="bodyImg"
+         alt="Human Body"
+         onerror="this.style.display='none'; document.getElementById('fallbackCanvas').style.display='block'">
+
+    <!-- Fallback canvas if image doesn't load -->
+    <canvas id="fallbackCanvas" width="900" height="506"
+            style="display:block; width:100%; background: linear-gradient(135deg,#0a1828,#0d2040,#0a1828);"></canvas>
+
+    <!-- ── HOTSPOTS ── -->
+
+    <!-- BRAIN -->
+    <div class="hotspot" id="btn-brain"
+         style="left: 50%; top: 14%;"
+         onclick="openPanel('brain', this)">
+      <div class="hotspot-ring">
+        <span class="hotspot-icon">🧠</span>
       </div>
-
-      <!-- Callout 2: History & Roots -->
-      <div class="callout" data-target="heart">
-        <div class="callout-text">
-          <h3>History &amp; Roots</h3>
-          <p>Ancient petroglyphs and stone carvings — the foundation of identity.</p>
-        </div>
-        <div class="connector"></div>
-        <div class="circle-img">
-          <canvas id="c-petro" width="110" height="110"></canvas>
-        </div>
-      </div>
-
+      <div class="hotspot-label">Brain</div>
     </div>
 
-    <!-- CENTRE HUMAN -->
-    <div class="human-wrap">
-      <canvas id="humanCanvas" width="380" height="560"></canvas>
-      <div class="title-block">
-        <h1>Kazakh Identity</h1>
-        <p>Spirit · Code · Heritage</p>
+    <!-- TONGUE (mouth area) -->
+    <div class="hotspot" id="btn-tongue"
+         style="left: 54%; top: 24%;"
+         onclick="openPanel('tongue', this)">
+      <div class="hotspot-ring">
+        <span class="hotspot-icon">👅</span>
       </div>
+      <div class="hotspot-label">Tongue</div>
     </div>
 
-    <!-- RIGHT CALLOUTS -->
-    <div class="col-right">
-
-      <!-- Callout 1: Heart -->
-      <div class="callout" data-target="heart">
-        <div class="circle-img">
-          <canvas id="c-steppe" width="110" height="110"></canvas>
-        </div>
-        <div class="connector"></div>
-        <div class="callout-text">
-          <h3>Heart</h3>
-          <p>A glowing anatomical heart — love and devotion for the Motherland.</p>
-        </div>
+    <!-- HEART -->
+    <div class="hotspot" id="btn-heart"
+         style="left: 47%; top: 46%;"
+         onclick="openPanel('heart', this)">
+      <div class="hotspot-ring">
+        <span class="hotspot-icon">❤️</span>
       </div>
-
-      <!-- Callout 2: Spirit & Freedom -->
-      <div class="callout" data-target="brain">
-        <div class="circle-img">
-          <canvas id="c-birds" width="110" height="110"></canvas>
-        </div>
-        <div class="connector"></div>
-        <div class="callout-text">
-          <h3>Spirit &amp; Freedom</h3>
-          <p>Steppe eagles soaring — openness, vision, and future-thinking.</p>
-        </div>
-      </div>
-
+      <div class="hotspot-label">Heart</div>
     </div>
 
-  </div><!-- /layout -->
-</section>
+    <!-- BLOOD CANAL (aorta area) -->
+    <div class="hotspot" id="btn-blood"
+         style="left: 53%; top: 55%;"
+         onclick="openPanel('blood', this)">
+      <div class="hotspot-ring">
+        <span class="hotspot-icon">🩸</span>
+      </div>
+      <div class="hotspot-label">Blood Canal</div>
+    </div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <span class="nav-item">Heritage</span>
-  <span class="nav-item">Identity</span>
-  <span class="nav-item">Consciousness</span>
-  <span class="nav-item">Freedom</span>
-  <span class="nav-item">Future</span>
-</nav>
+    <!-- BONE (visible arm bone) -->
+    <div class="hotspot" id="btn-bone"
+         style="left: 30%; top: 52%;"
+         onclick="openPanel('bone', this)">
+      <div class="hotspot-ring">
+        <span class="hotspot-icon">🦴</span>
+      </div>
+      <div class="hotspot-label">Bone</div>
+    </div>
 
-<!-- ══════════════════════ SCRIPTS ══════════════════════ -->
+  </div><!-- /image-wrapper -->
+
+  <!-- INFO PANEL -->
+  <div class="info-panel" id="infoPanel">
+    <span class="panel-close" onclick="closePanel()">✕</span>
+    <div class="panel-icon" id="panelIcon"></div>
+    <div class="panel-title" id="panelTitle"></div>
+    <div class="panel-subtitle" id="panelSub"></div>
+    <div class="panel-divider"></div>
+    <div class="panel-desc" id="panelDesc"></div>
+    <ul class="panel-facts" id="panelFacts"></ul>
+  </div>
+
+</div><!-- /container -->
+
+<!-- BOTTOM BUTTON BAR -->
+<div class="btn-bar">
+  <button class="btn" onclick="openPanel('brain',  document.getElementById('btn-brain'))">
+    <span class="btn-icon">🧠</span> Brain
+  </button>
+  <button class="btn" onclick="openPanel('tongue', document.getElementById('btn-tongue'))">
+    <span class="btn-icon">👅</span> Tongue
+  </button>
+  <button class="btn" onclick="openPanel('heart',  document.getElementById('btn-heart'))">
+    <span class="btn-icon">❤️</span> Heart
+  </button>
+  <button class="btn" onclick="openPanel('blood',  document.getElementById('btn-blood'))">
+    <span class="btn-icon">🩸</span> Blood Canal
+  </button>
+  <button class="btn" onclick="openPanel('bone',   document.getElementById('btn-bone'))">
+    <span class="btn-icon">🦴</span> Bone
+  </button>
+</div>
+
 <script>
-/* ───────────────────────────────────────────
-   1. STAR FIELD
-─────────────────────────────────────────── */
-(function createStars() {
-  const container = document.getElementById('stars');
-  for (let i = 0; i < 160; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const sz = Math.random() * 2.2 + 0.4;
-    s.style.cssText = `
-      width:${sz}px; height:${sz}px;
-      top:${Math.random()*100}%;
-      left:${Math.random()*100}%;
-      --d:${(Math.random()*4+2).toFixed(1)}s;
-      animation-delay:${(Math.random()*5).toFixed(1)}s;
-    `;
-    container.appendChild(s);
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+const DATA = {
+  brain: {
+    icon: '🧠',
+    title: 'Brain',
+    sub: 'Central Nervous System',
+    desc: 'The brain is the command center of the human body — a complex organ that controls thought, memory, emotion, touch, motor skills, vision, breathing, and every process that regulates your body.',
+    facts: [
+      'Weight: ~1.4 kg (3 lbs)',
+      '86 billion neurons inside',
+      'Uses 20% of total body energy',
+      'Generates 23 watts of power',
+      'Can store ~2.5 petabytes of data',
+      '100 trillion synaptic connections'
+    ]
+  },
+  tongue: {
+    icon: '👅',
+    title: 'Tongue',
+    sub: 'Taste & Speech Organ',
+    desc: 'The tongue is a muscular organ in the mouth that is vital for chewing, swallowing, tasting, and speaking. It contains thousands of taste buds that detect sweet, salty, sour, bitter, and umami flavors.',
+    facts: [
+      '~8,000 taste buds total',
+      'Taste buds renew every 2 weeks',
+      'Detects 5 basic taste profiles',
+      'Strongest muscle per gram in body',
+      'Average length: ~9 cm',
+      'Unique as a fingerprint'
+    ]
+  },
+  heart: {
+    icon: '❤️',
+    title: 'Heart',
+    sub: 'Cardiovascular Pump',
+    desc: 'The heart is a muscular organ that pumps blood throughout the body via the circulatory system, supplying oxygen and nutrients to tissues and removing carbon dioxide and other wastes.',
+    facts: [
+      'Beats ~100,000 times per day',
+      'Pumps ~5 liters/min of blood',
+      'Size of a clenched fist',
+      'Weight: 250–350 grams',
+      'Generates its own electrical impulse',
+      'Can beat outside the body'
+    ]
+  },
+  blood: {
+    icon: '🩸',
+    title: 'Blood Canal',
+    sub: 'Circulatory System',
+    desc: 'The blood canal system — arteries, veins, and capillaries — forms an extensive network spanning 96,000 km. It delivers oxygen, nutrients, hormones, and removes waste products from every cell in the body.',
+    facts: [
+      '96,000 km of blood vessels',
+      '5–6 liters of blood in adults',
+      '25 trillion red blood cells',
+      'Blood circulates in ~60 seconds',
+      '4 blood types: A, B, AB, O',
+      'Platelets repair damage in seconds'
+    ]
+  },
+  bone: {
+    icon: '🦴',
+    title: 'Bone',
+    sub: 'Skeletal System',
+    desc: 'Bones form the rigid framework of the body — the skeleton. They protect vital organs, produce blood cells in their marrow, store minerals like calcium and phosphorus, and enable movement by providing attachment points for muscles.',
+    facts: [
+      '206 bones in adult human body',
+      'Strongest material: cortical bone',
+      'Bone marrow produces blood cells',
+      'Bones are 70% mineral by weight',
+      'Completely replaced every ~10 years',
+      'Harder than reinforced concrete'
+    ]
   }
-})();
+};
 
-/* ───────────────────────────────────────────
-   2. DNA CANVAS (spinning double helix)
-─────────────────────────────────────────── */
-(function initDNA() {
-  const canvas = document.getElementById('dnaCanvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, raf;
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let activeOrgan = null;
+let activeBtn   = null;
 
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+/* ══════════════════════════════════════════
+   OPEN PANEL
+══════════════════════════════════════════ */
+function openPanel(organ, btnEl) {
+  const d = DATA[organ];
+  if (!d) return;
+
+  // Reset previous
+  if (activeBtn) {
+    activeBtn.classList.remove('active');
+    document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
   }
-  resize();
-  window.addEventListener('resize', resize);
 
-  // Kazakh-inspired ornament pattern on rung (simplified koshkar-muiz)
-  function drawOrnament(ctx, x, y, size, alpha) {
-    ctx.save();
-    ctx.globalAlpha = alpha * 0.9;
-    ctx.strokeStyle = '#E5B869';
-    ctx.lineWidth = 1.2;
-    ctx.translate(x, y);
-    // Ram-horn spiral suggestion
-    for (let i = 0; i < 2; i++) {
-      ctx.beginPath();
-      ctx.arc(i === 0 ? -size*0.25 : size*0.25, 0, size*0.22, 0, Math.PI*1.5);
-      ctx.stroke();
+  activeOrgan = organ;
+  activeBtn   = btnEl;
+  btnEl.classList.add('active');
+
+  // Ripple effect
+  const ripple = document.createElement('div');
+  ripple.className = 'ripple';
+  btnEl.querySelector('.hotspot-ring').appendChild(ripple);
+  setTimeout(() => ripple.remove(), 700);
+
+  // Fill panel
+  document.getElementById('panelIcon').textContent  = d.icon;
+  document.getElementById('panelTitle').textContent = d.title;
+  document.getElementById('panelSub').textContent   = d.sub;
+  document.getElementById('panelDesc').textContent  = d.desc;
+
+  const factsEl = document.getElementById('panelFacts');
+  factsEl.innerHTML = '';
+  d.facts.forEach(f => {
+    const li = document.createElement('li');
+    li.textContent = f;
+    factsEl.appendChild(li);
+  });
+
+  // Show panel
+  document.getElementById('infoPanel').classList.add('visible');
+
+  // Also highlight matching bottom button
+  document.querySelectorAll('.btn').forEach(b => {
+    if (b.textContent.toLowerCase().includes(organ === 'blood' ? 'blood' : organ)) {
+      b.classList.add('active');
     }
-    ctx.restore();
-  }
+  });
+}
 
-  let t = 0;
+/* ══════════════════════════════════════════
+   CLOSE PANEL
+══════════════════════════════════════════ */
+function closePanel() {
+  document.getElementById('infoPanel').classList.remove('visible');
+  if (activeBtn) activeBtn.classList.remove('active');
+  document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  activeOrgan = null;
+  activeBtn   = null;
+}
 
-  function drawHelix(offsetX, speed, colorA, colorB) {
-    const cx   = W / 2 + offsetX;
-    const top  = H * 0.04;
-    const bot  = H * 0.96;
-    const len  = bot - top;
-    const amp  = 110;          // horizontal amplitude
-    const segs = 80;
-    const step = len / segs;
-
-    // Draw backbone A
-    ctx.beginPath();
-    ctx.strokeStyle = colorA;
-    ctx.lineWidth   = 2.5;
-    ctx.shadowColor = colorA;
-    ctx.shadowBlur  = 12;
-    for (let i = 0; i <= segs; i++) {
-      const y  = top + i * step;
-      const ph = (i / segs) * Math.PI * 6 + t * speed;
-      const x  = cx + Math.cos(ph) * amp;
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-
-    // Draw backbone B
-    ctx.beginPath();
-    ctx.strokeStyle = colorB;
-    ctx.lineWidth   = 2.5;
-    ctx.shadowColor = colorB;
-    ctx.shadowBlur  = 12;
-    for (let i = 0; i <= segs; i++) {
-      const y  = top + i * step;
-      const ph = (i / segs) * Math.PI * 6 + t * speed + Math.PI;
-      const x  = cx + Math.cos(ph) * amp;
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-
-    // Rungs + ornaments
-    for (let i = 0; i <= segs; i += 2) {
-      const y   = top + i * step;
-      const ph  = (i / segs) * Math.PI * 6 + t * speed;
-      const xA  = cx + Math.cos(ph)          * amp;
-      const xB  = cx + Math.cos(ph + Math.PI) * amp;
-      const dep = Math.cos(ph);              // depth cue
-      const alp = (dep + 1) / 2 * 0.85 + 0.1;
-
-      ctx.globalAlpha = alp;
-      ctx.beginPath();
-      ctx.strokeStyle = '#E5B869';
-      ctx.lineWidth   = 1.5;
-      ctx.shadowColor = '#E5B869';
-      ctx.shadowBlur  = 6;
-      ctx.moveTo(xA, y);
-      ctx.lineTo(xB, y);
-      ctx.stroke();
-      ctx.shadowBlur  = 0;
-
-      // dot endpoints
-      [xA, xB].forEach(px => {
-        ctx.beginPath();
-        ctx.fillStyle = '#4FC3F7';
-        ctx.shadowColor = '#4FC3F7';
-        ctx.shadowBlur  = 8;
-        ctx.arc(px, y, 3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      });
-
-      drawOrnament(ctx, (xA + xB) / 2, y, 10, alp * 0.6);
-      ctx.globalAlpha = 1;
-    }
-  }
-
-  function loop() {
-    ctx.clearRect(0, 0, W, H);
-    t += 0.012;
-    drawHelix(0, 1, '#4FC3F7aa', '#E5B869aa');
-    raf = requestAnimationFrame(loop);
-  }
-  loop();
-})();
-
-/* ───────────────────────────────────────────
-   3. HUMAN BODY CANVAS
-─────────────────────────────────────────── */
-(function initHuman() {
-  const canvas = document.getElementById('humanCanvas');
+/* ══════════════════════════════════════════
+   FALLBACK CANVAS — draw body if img fails
+══════════════════════════════════════════ */
+(function drawFallback() {
+  const canvas = document.getElementById('fallbackCanvas');
   const ctx    = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
-  let   t = 0;
-  let   heartPulse = 0;
-  let   brainPulse = 0;
 
-  // Expose pulse targets for hover
-  window._pulseHeart = () => { heartPulse = 1; };
-  window._pulseBrain = () => { brainPulse = 1; };
+  // Background gradient
+  const bg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W*0.7);
+  bg.addColorStop(0, '#0d2040');
+  bg.addColorStop(0.6, '#080f20');
+  bg.addColorStop(1, '#050a14');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
 
-  function lerp(a, b, n) { return a + (b - a) * n; }
+  // DNA helix (right side)
+  drawDNA(ctx, W*0.75, H, 120, '#4FC3F7', '#E5B869');
 
-  function drawBody(ctx) {
-    // === SILHOUETTE (translucent blue-dark) ===
-    ctx.save();
-    const grad = ctx.createLinearGradient(W*0.2, 0, W*0.8, H);
-    grad.addColorStop(0,   'rgba(26,50,80,0.85)');
-    grad.addColorStop(0.5, 'rgba(10,25,50,0.90)');
-    grad.addColorStop(1,   'rgba(5,10,20,0.95)');
+  // Human silhouette
+  const cx = W * 0.42, cy = H * 0.5;
 
-    ctx.fillStyle   = grad;
-    ctx.strokeStyle = '#4FC3F766';
-    ctx.lineWidth   = 1.5;
+  ctx.save();
+  const bodyGrad = ctx.createLinearGradient(cx-120, 0, cx+120, H);
+  bodyGrad.addColorStop(0, 'rgba(30,60,100,0.9)');
+  bodyGrad.addColorStop(0.5, 'rgba(15,35,70,0.95)');
+  bodyGrad.addColorStop(1, 'rgba(5,15,35,0.9)');
 
-    // Head
+  // HEAD
+  ctx.fillStyle = bodyGrad;
+  ctx.strokeStyle = '#4FC3F788';
+  ctx.lineWidth = 1.5;
+  ctx.shadowColor = '#4FC3F7';
+  ctx.shadowBlur = 15;
+  ctx.beginPath();
+  ctx.ellipse(cx, H*0.12, 55, 65, 0, 0, Math.PI*2);
+  ctx.fill(); ctx.stroke();
+
+  // NECK
+  ctx.beginPath();
+  ctx.rect(cx-22, H*0.22, 44, 40);
+  ctx.fill(); ctx.stroke();
+
+  // TORSO
+  ctx.beginPath();
+  ctx.moveTo(cx-130, H*0.25);
+  ctx.bezierCurveTo(cx-140, H*0.35, cx-135, H*0.58, cx-100, H*0.65);
+  ctx.lineTo(cx+80, H*0.65);
+  ctx.bezierCurveTo(cx+115, H*0.58, cx+120, H*0.35, cx+110, H*0.25);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+
+  // LEFT ARM
+  ctx.beginPath();
+  ctx.moveTo(cx-130, H*0.25);
+  ctx.bezierCurveTo(cx-155, H*0.35, cx-160, H*0.55, cx-145, H*0.70);
+  ctx.lineTo(cx-125, H*0.68);
+  ctx.bezierCurveTo(cx-135, H*0.54, cx-130, H*0.38, cx-110, H*0.30);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+
+  // RIGHT ARM
+  ctx.beginPath();
+  ctx.moveTo(cx+110, H*0.25);
+  ctx.bezierCurveTo(cx+135, H*0.35, cx+140, H*0.55, cx+125, H*0.70);
+  ctx.lineTo(cx+105, H*0.68);
+  ctx.bezierCurveTo(cx+115, H*0.54, cx+110, H*0.38, cx+90, H*0.30);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+
+  // LEFT LEG
+  ctx.beginPath();
+  ctx.moveTo(cx-70, H*0.65);
+  ctx.bezierCurveTo(cx-80, H*0.80, cx-78, H*0.92, cx-72, H);
+  ctx.lineTo(cx-40, H);
+  ctx.bezierCurveTo(cx-38, H*0.92, cx-35, H*0.80, cx-30, H*0.65);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+
+  // RIGHT LEG
+  ctx.beginPath();
+  ctx.moveTo(cx+10, H*0.65);
+  ctx.bezierCurveTo(cx+15, H*0.80, ctx.i=0, H*0.92, cx+20, H);
+  ctx.lineTo(cx+55, H);
+  ctx.bezierCurveTo(cx+58, H*0.92, cx+60, H*0.80, cx+55, H*0.65);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+
+  ctx.shadowBlur = 0;
+
+  // BRAIN (glowing)
+  const brainGrad = ctx.createRadialGradient(cx, H*0.10, 0, cx, H*0.10, 45);
+  brainGrad.addColorStop(0, '#6ED4F7');
+  brainGrad.addColorStop(0.5, '#2a80c0');
+  brainGrad.addColorStop(1, 'rgba(10,40,80,0.2)');
+  ctx.fillStyle = brainGrad;
+  ctx.shadowColor = '#4FC3F7'; ctx.shadowBlur = 25;
+  ctx.beginPath();
+  ctx.ellipse(cx-10, H*0.10, 30, 24, -0.1, 0, Math.PI*2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx+10, H*0.10, 30, 24, 0.1, 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // HEART (glowing orange)
+  const hGrad = ctx.createRadialGradient(cx-10, H*0.42, 0, cx-10, H*0.42, 30);
+  hGrad.addColorStop(0, '#ff9050');
+  hGrad.addColorStop(0.5, '#d04010');
+  hGrad.addColorStop(1, 'rgba(80,10,0,0.1)');
+  ctx.fillStyle = hGrad;
+  ctx.shadowColor = '#ff6020'; ctx.shadowBlur = 30;
+  ctx.beginPath();
+  ctx.moveTo(cx-10, H*0.46);
+  ctx.bezierCurveTo(cx-12, H*0.44, cx-28, H*0.38, cx-28, H*0.40);
+  ctx.bezierCurveTo(cx-28, H*0.34, cx-12, H*0.34, cx-10, H*0.38);
+  ctx.bezierCurveTo(cx-8,  H*0.34, cx+8,  H*0.34, cx+8, H*0.40);
+  ctx.bezierCurveTo(cx+8,  H*0.38, cx-8,  H*0.44, cx-10, H*0.46);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // BONE (arm bone visible)
+  ctx.strokeStyle = '#c8a870aa';
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+  ctx.shadowColor = '#c8a870'; ctx.shadowBlur = 10;
+  ctx.beginPath();
+  ctx.moveTo(cx-145, H*0.40);
+  ctx.lineTo(cx-140, H*0.62);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // BLOOD VESSELS
+  ctx.strokeStyle = '#e04010aa';
+  ctx.lineWidth = 2;
+  ctx.shadowColor = '#ff4010'; ctx.shadowBlur = 8;
+  // Aorta down
+  ctx.beginPath();
+  ctx.moveTo(cx-5, H*0.44);
+  ctx.bezierCurveTo(cx-5, H*0.52, cx, H*0.58, cx-2, H*0.65);
+  ctx.stroke();
+  // Branch left
+  ctx.beginPath();
+  ctx.moveTo(cx-5, H*0.50);
+  ctx.bezierCurveTo(cx-30, H*0.50, cx-55, H*0.52, cx-70, H*0.60);
+  ctx.stroke();
+  // Branch right
+  ctx.beginPath();
+  ctx.moveTo(cx-5, H*0.50);
+  ctx.bezierCurveTo(cx+20, H*0.50, cx+45, H*0.52, cx+55, H*0.58);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // ORNAMENT on torso (Kazakh pattern suggestion)
+  ctx.strokeStyle = '#E5B86944';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 4; i++) {
+    const y = H*(0.35 + i*0.05);
     ctx.beginPath();
-    ctx.ellipse(W*0.47, H*0.10, 52, 62, -0.08, 0, Math.PI*2);
-    ctx.fill(); ctx.stroke();
-
-    // Neck
-    ctx.beginPath();
-    ctx.rect(W*0.40, H*0.195, 58, 42);
-    ctx.fill(); ctx.stroke();
-
-    // Torso
-    ctx.beginPath();
-    ctx.moveTo(W*0.18, H*0.23);
-    ctx.bezierCurveTo(W*0.15, H*0.28, W*0.12, H*0.55, W*0.18, H*0.62);
-    ctx.lineTo(W*0.82, H*0.62);
-    ctx.bezierCurveTo(W*0.88, H*0.55, W*0.85, H*0.28, W*0.82, H*0.23);
-    ctx.closePath();
-    ctx.fill(); ctx.stroke();
-
-    // Left arm
-    ctx.beginPath();
-    ctx.moveTo(W*0.18, H*0.23);
-    ctx.bezierCurveTo(W*0.05, H*0.30, W*0.03, H*0.52, W*0.08, H*0.65);
-    ctx.lineTo(W*0.14, H*0.63);
-    ctx.bezierCurveTo(W*0.10, H*0.50, W*0.12, H*0.33, W*0.22, H*0.27);
-    ctx.closePath();
-    ctx.fill(); ctx.stroke();
-
-    // Right arm
-    ctx.beginPath();
-    ctx.moveTo(W*0.82, H*0.23);
-    ctx.bezierCurveTo(W*0.95, H*0.30, W*0.97, H*0.52, W*0.92, H*0.65);
-    ctx.lineTo(W*0.86, H*0.63);
-    ctx.bezierCurveTo(W*0.90, H*0.50, W*0.88, H*0.33, W*0.78, H*0.27);
-    ctx.closePath();
-    ctx.fill(); ctx.stroke();
-
-    // Left leg
-    ctx.beginPath();
-    ctx.moveTo(W*0.30, H*0.62);
-    ctx.bezierCurveTo(W*0.24, H*0.75, W*0.24, H*0.88, W*0.26, H*1.00);
-    ctx.lineTo(W*0.40, H*1.00);
-    ctx.bezierCurveTo(W*0.38, H*0.88, W*0.38, H*0.75, W*0.44, H*0.62);
-    ctx.closePath();
-    ctx.fill(); ctx.stroke();
-
-    // Right leg
-    ctx.beginPath();
-    ctx.moveTo(W*0.56, H*0.62);
-    ctx.bezierCurveTo(W*0.62, H*0.75, W*0.62, H*0.88, W*0.60, H*1.00);
-    ctx.lineTo(W*0.74, H*1.00);
-    ctx.bezierCurveTo(W*0.76, H*0.88, W*0.76, H*0.75, W*0.70, H*0.62);
-    ctx.closePath();
-    ctx.fill(); ctx.stroke();
-
-    ctx.restore();
-  }
-
-  function drawSkeleton(ctx) {
-    ctx.save();
-    ctx.strokeStyle = '#4FC3F744';
-    ctx.lineWidth   = 1;
-
-    // Spine
-    ctx.beginPath();
-    ctx.moveTo(W*0.50, H*0.195);
-    ctx.lineTo(W*0.50, H*0.62);
+    ctx.moveTo(cx-20, y);
+    ctx.bezierCurveTo(cx-10, y-8, cx+10, y-8, cx+20, y);
     ctx.stroke();
-
-    // Ribs
-    for (let i = 0; i < 6; i++) {
-      const y = H * (0.27 + i * 0.04);
-      // left
-      ctx.beginPath();
-      ctx.moveTo(W*0.50, y);
-      ctx.bezierCurveTo(W*0.38, y - 5, W*0.25, y + 6, W*0.22, y + 12);
-      ctx.stroke();
-      // right
-      ctx.beginPath();
-      ctx.moveTo(W*0.50, y);
-      ctx.bezierCurveTo(W*0.62, y - 5, W*0.75, y + 6, W*0.78, y + 12);
-      ctx.stroke();
-    }
-
-    // Collar bones
-    ctx.beginPath();
-    ctx.moveTo(W*0.40, H*0.235);
-    ctx.lineTo(W*0.22, H*0.255);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(W*0.60, H*0.235);
-    ctx.lineTo(W*0.78, H*0.255);
-    ctx.stroke();
-
-    // Hips
-    ctx.beginPath();
-    ctx.moveTo(W*0.25, H*0.60);
-    ctx.lineTo(W*0.75, H*0.60);
-    ctx.stroke();
-
-    ctx.restore();
   }
 
-  function drawNerves(ctx) {
+  // Yurt circle (top-left)
+  drawCircleFrame(ctx, W*0.18, H*0.28, 60, '#c8a050', '#4FC3F7', '🏕');
+
+  // Steppe birds (right)
+  drawCircleFrame(ctx, W*0.80, H*0.55, 55, '#4FC3F7', '#E5B869', '🦅');
+
+  // Ancient coin (bottom-left)
+  drawCircleFrame(ctx, W*0.15, H*0.72, 52, '#E5B869', '#4FC3F7', '🪙');
+
+  ctx.restore();
+
+  function drawCircleFrame(ctx, x, y, r, c1, c2, emoji) {
     ctx.save();
-    ctx.strokeStyle = '#4FC3F733';
-    ctx.lineWidth   = 0.8;
-
-    for (let i = 0; i < 10; i++) {
-      const startX = W*0.50;
-      const startY = H*0.20;
-      const endX   = W*(0.15 + Math.random()*0.70);
-      const endY   = H*(0.30 + Math.random()*0.55);
-      ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      ctx.bezierCurveTo(
-        startX + (Math.random()-0.5)*60, startY + 40,
-        endX   + (Math.random()-0.5)*40, endY   - 40,
-        endX, endY
-      );
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  function drawBrain(ctx, pulse) {
-    const bx = W*0.50, by = H*0.092;
-    const glow = 15 + pulse * 25;
-
-    ctx.save();
-    // outer glow ring
-    if (pulse > 0.05) {
-      ctx.beginPath();
-      ctx.arc(bx, by, 40 + pulse * 20, 0, Math.PI*2);
-      ctx.strokeStyle = `rgba(229,184,105,${pulse * 0.5})`;
-      ctx.lineWidth   = 2;
-      ctx.stroke();
-    }
-
-    // brain shape
-    const brainGrad = ctx.createRadialGradient(bx, by, 0, bx, by, 50);
-    brainGrad.addColorStop(0, `rgba(79,195,247,${0.9 + pulse*0.1})`);
-    brainGrad.addColorStop(0.6, 'rgba(40,100,160,0.7)');
-    brainGrad.addColorStop(1,   'rgba(10,30,60,0.1)');
-
-    ctx.fillStyle   = brainGrad;
-    ctx.shadowColor = '#4FC3F7';
-    ctx.shadowBlur  = glow;
-
     ctx.beginPath();
-    ctx.ellipse(bx-12, by, 32, 26, -0.2, 0, Math.PI*2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(bx+12, by, 32, 26,  0.2, 0, Math.PI*2);
-    ctx.fill();
-
-    // synapses
-    ctx.shadowBlur = 6;
-    for (let i = 0; i < 12; i++) {
-      const angle  = (i / 12) * Math.PI * 2 + t * 0.5;
-      const radius = 10 + (i % 4) * 8;
-      const sx     = bx + Math.cos(angle) * radius;
-      const sy     = by + Math.sin(angle) * radius * 0.55;
-      const alpha  = 0.5 + 0.5 * Math.sin(t * 3 + i);
-      ctx.beginPath();
-      ctx.arc(sx, sy, 2, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(229,184,105,${alpha})`;
-      ctx.fill();
-    }
-    ctx.restore();
-  }
-
-  function drawHeart(ctx, pulse) {
-    const hx = W*0.48, hy = H*0.415;
-    const scale  = 1 + Math.sin(t * 2.5) * 0.08 + pulse * 0.15;
-    const glow   = 20 + pulse * 30;
-
-    ctx.save();
-    ctx.translate(hx, hy);
-    ctx.scale(scale, scale);
-
-    // pulse ring
-    if (pulse > 0.05) {
-      ctx.beginPath();
-      ctx.arc(0, 5, 35 + pulse * 25, 0, Math.PI*2);
-      ctx.strokeStyle = `rgba(229,184,105,${pulse * 0.6})`;
-      ctx.lineWidth   = 2;
-      ctx.stroke();
-    }
-
-    const hGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 28);
-    hGrad.addColorStop(0, '#ff8c42');
-    hGrad.addColorStop(0.4, '#e55a1c');
-    hGrad.addColorStop(1, '#7a1a00');
-
-    ctx.fillStyle   = hGrad;
-    ctx.shadowColor = '#ff6020';
-    ctx.shadowBlur  = glow;
-
-    // heart path
-    ctx.beginPath();
-    ctx.moveTo(0, 12);
-    ctx.bezierCurveTo(-4, 6,  -22, -4, -22, -12);
-    ctx.bezierCurveTo(-22, -26, -2, -26, 0, -10);
-    ctx.bezierCurveTo(2, -26,  22, -26,  22, -12);
-    ctx.bezierCurveTo(22, -4,   4,  6,   0, 12);
-    ctx.fill();
-
-    ctx.restore();
-  }
-
-  function drawVessels(ctx) {
-    ctx.save();
-    ctx.lineWidth   = 1.2;
-    ctx.strokeStyle = '#e55a1c55';
-    ctx.shadowColor = '#ff602033';
-    ctx.shadowBlur  = 4;
-
-    const cx = W*0.48, cy = H*0.415
+    ctx.arc(
