@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kazakh Identity — National DNA</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #050505;
+    color: #fff;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── HERO SECTION ── */
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: radial-gradient(ellipse at center, #1a2a40 0%, #0a1020 45%, #050505 100%);
+  }
+
+  /* ── CANVAS DNA ── */
+  #dnaCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.85;
+  }
+
+  /* ── PARTICLE STARS ── */
+  .stars {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    animation: twinkle var(--d) ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.1; transform: scale(1); }
+    to   { opacity: 0.8; transform: scale(1.4); }
+  }
+
+  /* ── LAYOUT GRID ── */
+  .layout {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 1fr 420px 1fr;
+    grid-template-rows: auto;
+    gap: 0 20px;
+    width: 100%;
+    max-width: 1400px;
+    padding: 60px 30px;
+    align-items: center;
+  }
+
+  /* ── LEFT COLUMN ── */
+  .col-left {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: flex-end;
+  }
+
+  /* ── RIGHT COLUMN ── */
+  .col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: flex-start;
+  }
+
+  /* ── CALLOUT CARD ── */
+  .callout {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    transform: translateX(-40px);
+    animation: slideIn 0.8s ease forwards;
+    cursor: pointer;
+  }
+  .col-right .callout {
+    flex-direction: row-reverse;
+    transform: translateX(40px);
+    animation: slideInR 0.8s ease forwards;
+  }
+  @keyframes slideIn  { to { opacity:1; transform:translateX(0); } }
+  @keyframes slideInR { to { opacity:1; transform:translateX(0); } }
+
+  .callout:nth-child(1) { animation-delay: 0.3s; }
+  .callout:nth-child(2) { animation-delay: 0.6s; }
+  .col-right .callout:nth-child(1) { animation-delay: 0.5s; }
+  .col-right .callout:nth-child(2) { animation-delay: 0.8s; }
+
+  /* ── CIRCLE IMAGE ── */
+  .circle-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 3px solid #E5B869;
+    box-shadow: 0 0 18px #E5B86988, 0 0 40px #E5B86933;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    position: relative;
+  }
+  .circle-img:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 30px #E5B869cc, 0 0 60px #E5B86966;
+  }
+  .circle-img canvas,
+  .circle-img svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Canvas-painted circles */
+  .circle-img canvas { border-radius: 50%; }
+
+  /* ── CONNECTOR LINE ── */
+  .connector {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #E5B869cc, transparent);
+    position: relative;
+    overflow: hidden;
+  }
+  .connector::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #fff, transparent);
+    animation: lightTravel 2.5s linear infinite;
+  }
+  @keyframes lightTravel { to { left: 200%; } }
+
+  /* ── TEXT BOX ── */
+  .callout-text { max-width: 180px; }
+  .col-left .callout-text { text-align: right; }
+  .col-right .callout-text { text-align: left; }
+
+  .callout-text h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #E5B869;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 10px #E5B86988;
+    margin-bottom: 5px;
+  }
+  .callout-text p {
+    font-size: 11px;
+    font-weight: 300;
+    color: #aac4d8;
+    line-height: 1.5;
+  }
+
+  /* ── CENTRE HUMAN ── */
+  .human-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #humanCanvas {
+    display: block;
+    filter: drop-shadow(0 0 30px #4FC3F755) drop-shadow(0 0 60px #1a2a4088);
+  }
+
+  /* ── TITLE OVERLAY ── */
+  .title-block {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .title-block h1 {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #E5B869;
+    text-shadow: 0 0 20px #E5B869aa;
+  }
+  .title-block p {
+    font-size: 10px;
+    letter-spacing: 6px;
+    color: #4FC3F7;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 30px 20px 50px;
+    background: linear-gradient(to bottom, transparent, #050505);
+  }
+  .nav-item {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #4FC3F7;
+    cursor: pointer;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .nav-item:hover {
+    color: #E5B869;
+    text-shadow: 0 0 12px #E5B869;
+  }
+
+  /* ── PULSE RING ── */
+  @keyframes pulseRing {
+    0%   { transform: scale(1);   opacity: 0.6; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; grid-template-rows: auto; }
+    .col-left, .col-right { align-items: center; }
+    .col-left .callout-text, .col-right .callout-text { text-align: center; }
+    .human-wrap { order: -1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ HERO ══════════════════════ -->
+<section class="hero">
+
+  <!-- Stars -->
+  <div class="stars" id="stars"></div>
+
+  <!-- DNA Canvas (background) -->
+  <canvas id="dnaCanvas"></canvas>
+
+  <!-- Layout -->
+  <div class="layout">
+
+    <!-- LEFT CALLOUTS -->
+    <div class="col-left">
+
+      <!-- Callout 1: National Code -->
+      <div class="callout" data-target="brain">
+        <div class="callout-text">
+          <h3>National Code</h3>
+          <p>DNA strand with Kazakh geometric ornaments — biological &amp; cultural continuity.</p>
+        </div>
+        <div class="connector"></div>
+        <div class="circle-img">
+          <canvas id="c-yurt" width="110" height="110"></canvas>
+        </div>
+      </div>
+
+      <!-- Callout 2: History & Roots -->
+      <div class="callout" data-target="heart">
+        <div class="callout-text">
+          <h3>History &amp; Roots</h3>
+          <p>Ancient petroglyphs and stone carvings — the foundation of identity.</p>
+        </div>
+        <div class="connector"></div>
+        <div class="circle-img">
+          <canvas id="c-petro" width="110" height="110"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CENTRE HUMAN -->
+    <div class="human-wrap">
+      <canvas id="humanCanvas" width="380" height="560"></canvas>
+      <div class="title-block">
+        <h1>Kazakh Identity</h1>
+        <p>Spirit · Code · Heritage</p>
+      </div>
+    </div>
+
+    <!-- RIGHT CALLOUTS -->
+    <div class="col-right">
+
+      <!-- Callout 1: Heart -->
+      <div class="callout" data-target="heart">
+        <div class="circle-img">
+          <canvas id="c-steppe" width="110" height="110"></canvas>
+        </div>
+        <div class="connector"></div>
+        <div class="callout-text">
+          <h3>Heart</h3>
+          <p>A glowing anatomical heart — love and devotion for the Motherland.</p>
+        </div>
+      </div>
+
+      <!-- Callout 2: Spirit & Freedom -->
+      <div class="callout" data-target="brain">
+        <div class="circle-img">
+          <canvas id="c-birds" width="110" height="110"></canvas>
+        </div>
+        <div class="connector"></div>
+        <div class="callout-text">
+          <h3>Spirit &amp; Freedom</h3>
+          <p>Steppe eagles soaring — openness, vision, and future-thinking.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /layout -->
+</section>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <span class="nav-item">Heritage</span>
+  <span class="nav-item">Identity</span>
+  <span class="nav-item">Consciousness</span>
+  <span class="nav-item">Freedom</span>
+  <span class="nav-item">Future</span>
+</nav>
+
+<!-- ══════════════════════ SCRIPTS ══════════════════════ -->
+<script>
+/* ───────────────────────────────────────────
+   1. STAR FIELD
+─────────────────────────────────────────── */
+(function createStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 160; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 2.2 + 0.4;
+    s.style.cssText = `
+      width:${sz}px; height:${sz}px;
+      top:${Math.random()*100}%;
+      left:${Math.random()*100}%;
+      --d:${(Math.random()*4+2).toFixed(1)}s;
+      animation-delay:${(Math.random()*5).toFixed(1)}s;
+    `;
+    container.appendChild(s);
+  }
+})();
+
+/* ───────────────────────────────────────────
+   2. DNA CANVAS (spinning double helix)
+─────────────────────────────────────────── */
+(function initDNA() {
+  const canvas = document.getElementById('dnaCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, raf;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Kazakh-inspired ornament pattern on rung (simplified koshkar-muiz)
+  function drawOrnament(ctx, x, y, size, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha * 0.9;
+    ctx.strokeStyle = '#E5B869';
+    ctx.lineWidth = 1.2;
+    ctx.translate(x, y);
+    // Ram-horn spiral suggestion
+    for (let i = 0; i < 2; i++) {
+      ctx.beginPath();
+      ctx.arc(i === 0 ? -size*0.25 : size*0.25, 0, size*0.22, 0, Math.PI*1.5);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  let t = 0;
+
+  function drawHelix(offsetX, speed, colorA, colorB) {
+    const cx   = W / 2 + offsetX;
+    const top  = H * 0.04;
+    const bot  = H * 0.96;
+    const len  = bot - top;
+    const amp  = 110;          // horizontal amplitude
+    const segs = 80;
+    const step = len / segs;
+
+    // Draw backbone A
+    ctx.beginPath();
+    ctx.strokeStyle = colorA;
+    ctx.lineWidth   = 2.5;
+    ctx.shadowColor = colorA;
+    ctx.shadowBlur  = 12;
+    for (let i = 0; i <= segs; i++) {
+      const y  = top + i * step;
+      const ph = (i / segs) * Math.PI * 6 + t * speed;
+      const x  = cx + Math.cos(ph) * amp;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Draw backbone B
+    ctx.beginPath();
+    ctx.strokeStyle = colorB;
+    ctx.lineWidth   = 2.5;
+    ctx.shadowColor = colorB;
+    ctx.shadowBlur  = 12;
+    for (let i = 0; i <= segs; i++) {
+      const y  = top + i * step;
+      const ph = (i / segs) * Math.PI * 6 + t * speed + Math.PI;
+      const x  = cx + Math.cos(ph) * amp;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Rungs + ornaments
+    for (let i = 0; i <= segs; i += 2) {
+      const y   = top + i * step;
+      const ph  = (i / segs) * Math.PI * 6 + t * speed;
+      const xA  = cx + Math.cos(ph)          * amp;
+      const xB  = cx + Math.cos(ph + Math.PI) * amp;
+      const dep = Math.cos(ph);              // depth cue
+      const alp = (dep + 1) / 2 * 0.85 + 0.1;
+
+      ctx.globalAlpha = alp;
+      ctx.beginPath();
+      ctx.strokeStyle = '#E5B869';
+      ctx.lineWidth   = 1.5;
+      ctx.shadowColor = '#E5B869';
+      ctx.shadowBlur  = 6;
+      ctx.moveTo(xA, y);
+      ctx.lineTo(xB, y);
+      ctx.stroke();
+      ctx.shadowBlur  = 0;
+
+      // dot endpoints
+      [xA, xB].forEach(px => {
+        ctx.beginPath();
+        ctx.fillStyle = '#4FC3F7';
+        ctx.shadowColor = '#4FC3F7';
+        ctx.shadowBlur  = 8;
+        ctx.arc(px, y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      drawOrnament(ctx, (xA + xB) / 2, y, 10, alp * 0.6);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.012;
+    drawHelix(0, 1, '#4FC3F7aa', '#E5B869aa');
+    raf = requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ───────────────────────────────────────────
+   3. HUMAN BODY CANVAS
+─────────────────────────────────────────── */
+(function initHuman() {
+  const canvas = document.getElementById('humanCanvas');
+  const ctx    = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  let   t = 0;
+  let   heartPulse = 0;
+  let   brainPulse = 0;
+
+  // Expose pulse targets for hover
+  window._pulseHeart = () => { heartPulse = 1; };
+  window._pulseBrain = () => { brainPulse = 1; };
+
+  function lerp(a, b, n) { return a + (b - a) * n; }
+
+  function drawBody(ctx) {
+    // === SILHOUETTE (translucent blue-dark) ===
+    ctx.save();
+    const grad = ctx.createLinearGradient(W*0.2, 0, W*0.8, H);
+    grad.addColorStop(0,   'rgba(26,50,80,0.85)');
+    grad.addColorStop(0.5, 'rgba(10,25,50,0.90)');
+    grad.addColorStop(1,   'rgba(5,10,20,0.95)');
+
+    ctx.fillStyle   = grad;
+    ctx.strokeStyle = '#4FC3F766';
+    ctx.lineWidth   = 1.5;
+
+    // Head
+    ctx.beginPath();
+    ctx.ellipse(W*0.47, H*0.10, 52, 62, -0.08, 0, Math.PI*2);
+    ctx.fill(); ctx.stroke();
+
+    // Neck
+    ctx.beginPath();
+    ctx.rect(W*0.40, H*0.195, 58, 42);
+    ctx.fill(); ctx.stroke();
+
+    // Torso
+    ctx.beginPath();
+    ctx.moveTo(W*0.18, H*0.23);
+    ctx.bezierCurveTo(W*0.15, H*0.28, W*0.12, H*0.55, W*0.18, H*0.62);
+    ctx.lineTo(W*0.82, H*0.62);
+    ctx.bezierCurveTo(W*0.88, H*0.55, W*0.85, H*0.28, W*0.82, H*0.23);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    // Left arm
+    ctx.beginPath();
+    ctx.moveTo(W*0.18, H*0.23);
+    ctx.bezierCurveTo(W*0.05, H*0.30, W*0.03, H*0.52, W*0.08, H*0.65);
+    ctx.lineTo(W*0.14, H*0.63);
+    ctx.bezierCurveTo(W*0.10, H*0.50, W*0.12, H*0.33, W*0.22, H*0.27);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    // Right arm
+    ctx.beginPath();
+    ctx.moveTo(W*0.82, H*0.23);
+    ctx.bezierCurveTo(W*0.95, H*0.30, W*0.97, H*0.52, W*0.92, H*0.65);
+    ctx.lineTo(W*0.86, H*0.63);
+    ctx.bezierCurveTo(W*0.90, H*0.50, W*0.88, H*0.33, W*0.78, H*0.27);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    // Left leg
+    ctx.beginPath();
+    ctx.moveTo(W*0.30, H*0.62);
+    ctx.bezierCurveTo(W*0.24, H*0.75, W*0.24, H*0.88, W*0.26, H*1.00);
+    ctx.lineTo(W*0.40, H*1.00);
+    ctx.bezierCurveTo(W*0.38, H*0.88, W*0.38, H*0.75, W*0.44, H*0.62);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    // Right leg
+    ctx.beginPath();
+    ctx.moveTo(W*0.56, H*0.62);
+    ctx.bezierCurveTo(W*0.62, H*0.75, W*0.62, H*0.88, W*0.60, H*1.00);
+    ctx.lineTo(W*0.74, H*1.00);
+    ctx.bezierCurveTo(W*0.76, H*0.88, W*0.76, H*0.75, W*0.70, H*0.62);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawSkeleton(ctx) {
+    ctx.save();
+    ctx.strokeStyle = '#4FC3F744';
+    ctx.lineWidth   = 1;
+
+    // Spine
+    ctx.beginPath();
+    ctx.moveTo(W*0.50, H*0.195);
+    ctx.lineTo(W*0.50, H*0.62);
+    ctx.stroke();
+
+    // Ribs
+    for (let i = 0; i < 6; i++) {
+      const y = H * (0.27 + i * 0.04);
+      // left
+      ctx.beginPath();
+      ctx.moveTo(W*0.50, y);
+      ctx.bezierCurveTo(W*0.38, y - 5, W*0.25, y + 6, W*0.22, y + 12);
+      ctx.stroke();
+      // right
+      ctx.beginPath();
+      ctx.moveTo(W*0.50, y);
+      ctx.bezierCurveTo(W*0.62, y - 5, W*0.75, y + 6, W*0.78, y + 12);
+      ctx.stroke();
+    }
+
+    // Collar bones
+    ctx.beginPath();
+    ctx.moveTo(W*0.40, H*0.235);
+    ctx.lineTo(W*0.22, H*0.255);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(W*0.60, H*0.235);
+    ctx.lineTo(W*0.78, H*0.255);
+    ctx.stroke();
+
+    // Hips
+    ctx.beginPath();
+    ctx.moveTo(W*0.25, H*0.60);
+    ctx.lineTo(W*0.75, H*0.60);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawNerves(ctx) {
+    ctx.save();
+    ctx.strokeStyle = '#4FC3F733';
+    ctx.lineWidth   = 0.8;
+
+    for (let i = 0; i < 10; i++) {
+      const startX = W*0.50;
+      const startY = H*0.20;
+      const endX   = W*(0.15 + Math.random()*0.70);
+      const endY   = H*(0.30 + Math.random()*0.55);
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.bezierCurveTo(
+        startX + (Math.random()-0.5)*60, startY + 40,
+        endX   + (Math.random()-0.5)*40, endY   - 40,
+        endX, endY
+      );
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawBrain(ctx, pulse) {
+    const bx = W*0.50, by = H*0.092;
+    const glow = 15 + pulse * 25;
+
+    ctx.save();
+    // outer glow ring
+    if (pulse > 0.05) {
+      ctx.beginPath();
+      ctx.arc(bx, by, 40 + pulse * 20, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(229,184,105,${pulse * 0.5})`;
+      ctx.lineWidth   = 2;
+      ctx.stroke();
+    }
+
+    // brain shape
+    const brainGrad = ctx.createRadialGradient(bx, by, 0, bx, by, 50);
+    brainGrad.addColorStop(0, `rgba(79,195,247,${0.9 + pulse*0.1})`);
+    brainGrad.addColorStop(0.6, 'rgba(40,100,160,0.7)');
+    brainGrad.addColorStop(1,   'rgba(10,30,60,0.1)');
+
+    ctx.fillStyle   = brainGrad;
+    ctx.shadowColor = '#4FC3F7';
+    ctx.shadowBlur  = glow;
+
+    ctx.beginPath();
+    ctx.ellipse(bx-12, by, 32, 26, -0.2, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(bx+12, by, 32, 26,  0.2, 0, Math.PI*2);
+    ctx.fill();
+
+    // synapses
+    ctx.shadowBlur = 6;
+    for (let i = 0; i < 12; i++) {
+      const angle  = (i / 12) * Math.PI * 2 + t * 0.5;
+      const radius = 10 + (i % 4) * 8;
+      const sx     = bx + Math.cos(angle) * radius;
+      const sy     = by + Math.sin(angle) * radius * 0.55;
+      const alpha  = 0.5 + 0.5 * Math.sin(t * 3 + i);
+      ctx.beginPath();
+      ctx.arc(sx, sy, 2, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(229,184,105,${alpha})`;
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawHeart(ctx, pulse) {
+    const hx = W*0.48, hy = H*0.415;
+    const scale  = 1 + Math.sin(t * 2.5) * 0.08 + pulse * 0.15;
+    const glow   = 20 + pulse * 30;
+
+    ctx.save();
+    ctx.translate(hx, hy);
+    ctx.scale(scale, scale);
+
+    // pulse ring
+    if (pulse > 0.05) {
+      ctx.beginPath();
+      ctx.arc(0, 5, 35 + pulse * 25, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(229,184,105,${pulse * 0.6})`;
+      ctx.lineWidth   = 2;
+      ctx.stroke();
+    }
+
+    const hGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 28);
+    hGrad.addColorStop(0, '#ff8c42');
+    hGrad.addColorStop(0.4, '#e55a1c');
+    hGrad.addColorStop(1, '#7a1a00');
+
+    ctx.fillStyle   = hGrad;
+    ctx.shadowColor = '#ff6020';
+    ctx.shadowBlur  = glow;
+
+    // heart path
+    ctx.beginPath();
+    ctx.moveTo(0, 12);
+    ctx.bezierCurveTo(-4, 6,  -22, -4, -22, -12);
+    ctx.bezierCurveTo(-22, -26, -2, -26, 0, -10);
+    ctx.bezierCurveTo(2, -26,  22, -26,  22, -12);
+    ctx.bezierCurveTo(22, -4,   4,  6,   0, 12);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawVessels(ctx) {
+    ctx.save();
+    ctx.lineWidth   = 1.2;
+    ctx.strokeStyle = '#e55a1c55';
+    ctx.shadowColor = '#ff602033';
+    ctx.shadowBlur  = 4;
+
+    const cx = W*0.48, cy = H*0.415
